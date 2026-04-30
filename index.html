@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClothFit - Virtual Try-On E-Commerce</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">👕 ClothFit</div>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link">Home</a></li>
+                <li><a href="#" class="nav-link">Shop</a></li>
+                <li><a href="#" class="nav-link">Virtual Try-On</a></li>
+                <li><a href="#" class="nav-link">About</a></li>
+                <li><a href="#" class="nav-link cart-link">🛒 Cart (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Try Before You Buy!</h1>
+            <p>Experience our virtual clothing try-on technology</p>
+            <button class="cta-btn" onclick="document.querySelector('.try-on-section').scrollIntoView({behavior: 'smooth'})">Start Try-On</button>
+        </div>
+    </section>
+
+    <!-- Virtual Try-On Section -->
+    <section class="try-on-section" id="tryOnSection">
+        <div class="try-on-container">
+            <div class="try-on-area">
+                <h2>Virtual Try-On Mirror</h2>
+                <div class="mirror">
+                    <div class="avatar-container">
+                        <div class="avatar-body">
+                            <!-- Head -->
+                            <div class="head"></div>
+                            <!-- Upper Body (for shirts/tops) -->
+                            <div class="upper-body">
+                                <img id="clothing-upper" class="clothing-item" src="" alt="Upper clothing" />
+                            </div>
+                            <!-- Lower Body (for pants/skirts) -->
+                            <div class="lower-body">
+                                <img id="clothing-lower" class="clothing-item" src="" alt="Lower clothing" />
+                            </div>
+                            <!-- Feet -->
+                            <div class="feet">
+                                <img id="clothing-shoes" class="clothing-item" src="" alt="Shoes" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="try-on-info">
+                    <h3 id="item-name">Select a clothing item to try on</h3>
+                    <p id="item-price"></p>
+                    <p id="item-description"></p>
+                </div>
+            </div>
+
+            <!-- Product Selection -->
+            <div class="product-selection">
+                <h2>Available Items</h2>
+                <div class="product-tabs">
+                    <button class="tab-btn active" onclick="filterProducts('all')">All</button>
+                    <button class="tab-btn" onclick="filterProducts('tops')">Tops</button>
+                    <button class="tab-btn" onclick="filterProducts('bottoms')">Bottoms</button>
+                    <button class="tab-btn" onclick="filterProducts('shoes')">Shoes</button>
+                </div>
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section class="featured-section">
+        <h2>Trending Now</h2>
+        <div class="featured-grid" id="featuredGrid">
+            <!-- Featured products will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>ClothFit brings you the future of shopping with virtual try-on technology.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: support@clothfit.com</p>
+                <p>Phone: +1 (555) 123-4567</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ClothFit. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
