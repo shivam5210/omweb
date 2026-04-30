@@ -3,73 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClothFit - Virtual Try-On E-Commerce</title>
+    <meta name="description" content="Dressify - Revolutionary virtual try-on technology for online fashion shopping. See how clothes look on you before you buy.">
+    <meta name="keywords" content="fashion, clothing, virtual try-on, e-commerce">
+    <title>Dressify - Virtual Try-On Fashion E-Commerce Platform</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">👕 ClothFit</div>
+            <div class="logo">
+                <span class="logo-icon">👗</span>
+                <span class="logo-text">Dressify</span>
+            </div>
             <ul class="nav-menu">
-                <li><a href="#" class="nav-link">Home</a></li>
-                <li><a href="#" class="nav-link">Shop</a></li>
-                <li><a href="#" class="nav-link">Virtual Try-On</a></li>
-                <li><a href="#" class="nav-link">About</a></li>
-                <li><a href="#" class="nav-link cart-link">🛒 Cart (<span id="cart-count">0</span>)</a></li>
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#tryon" class="nav-link">Virtual Try-On</a></li>
+                <li><a href="#collection" class="nav-link">Collection</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#" class="nav-link cart-link">🛒 Cart <span id="cart-count" class="cart-badge">0</span></a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="home">
         <div class="hero-content">
-            <h1>Try Before You Buy!</h1>
-            <p>Experience our virtual clothing try-on technology</p>
-            <button class="cta-btn" onclick="document.querySelector('.try-on-section').scrollIntoView({behavior: 'smooth'})">Start Try-On</button>
+            <h1>Discover Your Perfect Style</h1>
+            <p>Try on clothes virtually and shop with confidence using Dressify's advanced try-on technology</p>
+            <button class="cta-btn" onclick="document.querySelector('.try-on-section').scrollIntoView({behavior: 'smooth'})">Start Virtual Try-On</button>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">50K+</span>
+                    <span class="stat-label">Happy Customers</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">10K+</span>
+                    <span class="stat-label">Products</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">99%</span>
+                    <span class="stat-label">Satisfaction</span>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Virtual Try-On Section -->
-    <section class="try-on-section" id="tryOnSection">
+    <section class="try-on-section" id="tryon">
+        <div class="section-header">
+            <h2>Virtual Try-On Mirror</h2>
+            <p>Experience the future of fashion shopping</p>
+        </div>
         <div class="try-on-container">
             <div class="try-on-area">
-                <h2>Virtual Try-On Mirror</h2>
-                <div class="mirror">
-                    <div class="avatar-container">
-                        <div class="avatar-body">
-                            <!-- Head -->
-                            <div class="head"></div>
-                            <!-- Upper Body (for shirts/tops) -->
-                            <div class="upper-body">
-                                <img id="clothing-upper" class="clothing-item" src="" alt="Upper clothing" />
-                            </div>
-                            <!-- Lower Body (for pants/skirts) -->
-                            <div class="lower-body">
-                                <img id="clothing-lower" class="clothing-item" src="" alt="Lower clothing" />
-                            </div>
-                            <!-- Feet -->
-                            <div class="feet">
-                                <img id="clothing-shoes" class="clothing-item" src="" alt="Shoes" />
+                <div class="mirror-wrapper">
+                    <div class="mirror">
+                        <div class="avatar-container">
+                            <div class="avatar-body">
+                                <!-- Head -->
+                                <div class="head">
+                                    <div class="eyes"></div>
+                                    <div class="mouth"></div>
+                                </div>
+                                <!-- Upper Body (for shirts/tops) -->
+                                <div class="upper-body">
+                                    <img id="clothing-upper" class="clothing-item" src="" alt="Upper clothing" />
+                                </div>
+                                <!-- Lower Body (for pants/skirts) -->
+                                <div class="lower-body">
+                                    <img id="clothing-lower" class="clothing-item" src="" alt="Lower clothing" />
+                                </div>
+                                <!-- Feet -->
+                                <div class="feet">
+                                    <img id="clothing-shoes" class="clothing-item" src="" alt="Shoes" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="try-on-info">
-                    <h3 id="item-name">Select a clothing item to try on</h3>
-                    <p id="item-price"></p>
+                    <h3 id="item-name">Select clothing items to try on</h3>
+                    <p id="item-category" class="category-badge"></p>
+                    <p id="item-price" class="price-display"></p>
                     <p id="item-description"></p>
+                    <div class="info-meta">
+                        <span id="item-material"></span>
+                        <span id="item-rating"></span>
+                    </div>
                 </div>
             </div>
 
             <!-- Product Selection -->
             <div class="product-selection">
-                <h2>Available Items</h2>
+                <div class="selection-header">
+                    <h3>Browse Collection</h3>
+                    <p>Choose from 50+ premium items</p>
+                </div>
                 <div class="product-tabs">
-                    <button class="tab-btn active" onclick="filterProducts('all')">All</button>
-                    <button class="tab-btn" onclick="filterProducts('tops')">Tops</button>
-                    <button class="tab-btn" onclick="filterProducts('bottoms')">Bottoms</button>
-                    <button class="tab-btn" onclick="filterProducts('shoes')">Shoes</button>
+                    <button class="tab-btn active" onclick="filterProducts('all')">All Items</button>
+                    <button class="tab-btn" onclick="filterProducts('tops')">👔 Tops</button>
+                    <button class="tab-btn" onclick="filterProducts('bottoms')">👖 Bottoms</button>
+                    <button class="tab-btn" onclick="filterProducts('shoes')">👠 Shoes</button>
                 </div>
                 <div class="products-grid" id="productsGrid">
                     <!-- Products will be loaded here -->
@@ -78,37 +113,109 @@
         </div>
     </section>
 
-    <!-- Featured Products Section -->
-    <section class="featured-section">
-        <h2>Trending Now</h2>
+    <!-- Why Choose Dressify -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2>Why Choose Dressify?</h2>
+            <p>Experience the next generation of online shopping</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Perfect Fit</h3>
+                <p>See exactly how clothes fit your body before purchasing</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Fast & Easy</h3>
+                <p>Intuitive interface makes virtual try-on seamless and quick</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💯</div>
+                <h3>Quality Assured</h3>
+                <p>All products are verified and come with quality guarantee</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Global Shipping</h3>
+                <p>Fast and reliable shipping to customers worldwide</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h3>Secure Payment</h3>
+                <p>Multiple payment options with 100% secure transactions</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Friendly</h3>
+                <p>Shop anytime, anywhere with our responsive design</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured/Trending Products Section -->
+    <section class="featured-section" id="collection">
+        <div class="section-header">
+            <h2>Trending Collections</h2>
+            <p>Handpicked selections from our fashion experts</p>
+        </div>
         <div class="featured-grid" id="featuredGrid">
             <!-- Featured products will be loaded here -->
         </div>
     </section>
 
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="newsletter-content">
+            <h2>Stay Updated</h2>
+            <p>Subscribe to get exclusive offers and styling tips</p>
+            <div class="newsletter-form">
+                <input type="email" placeholder="Enter your email" class="newsletter-input">
+                <button class="newsletter-btn">Subscribe</button>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" id="about">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>About Us</h4>
-                <p>ClothFit brings you the future of shopping with virtual try-on technology.</p>
+                <h4>About Dressify</h4>
+                <p>Dressify is revolutionizing online fashion with virtual try-on technology, helping customers shop with confidence and style.</p>
+                <div class="social-links">
+                    <a href="#">Facebook</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Twitter</a>
+                </div>
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="#">Shop</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Collections</a></li>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Sale</a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h4>Contact</h4>
-                <p>Email: support@clothfit.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Get In Touch</h4>
+                <p>📧 support@dressify.com</p>
+                <p>📱 +1 (800) 123-4567</p>
+                <p>📍 123 Fashion Street, NYC</p>
             </div>
         </div>
+        <div class="footer-divider"></div>
         <div class="footer-bottom">
-            <p>&copy; 2026 ClothFit. All rights reserved.</p>
+            <p>&copy; 2026 Dressify. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
         </div>
     </footer>
 
