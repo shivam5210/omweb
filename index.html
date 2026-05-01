@@ -4,34 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Dressify - Revolutionary virtual try-on technology for online fashion shopping. See how clothes look on you before you buy.">
-    <meta name="keywords" content="fashion, clothing, virtual try-on, e-commerce">
+    <meta name="keywords" content="fashion, clothing, virtual try-on, e-commerce, AI recommendations">
+    <meta name="theme-color" content="#667eea">
+    <meta property="og:title" content="Dressify - Virtual Try-On Fashion">
+    <meta property="og:description" content="Experience the future of fashion with AI-powered virtual try-on">
     <title>Dressify - Virtual Try-On Fashion E-Commerce Platform</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="nav-container">
-            <div class="logo">
+            <a href="#home" class="logo" aria-label="Dressify Home">
                 <span class="logo-icon">👗</span>
                 <span class="logo-text">Dressify</span>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#tryon" class="nav-link">Virtual Try-On</a></li>
-                <li><a href="#collection" class="nav-link">Collection</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#" class="nav-link cart-link">🛒 Cart <span id="cart-count" class="cart-badge">0</span></a></li>
+            </a>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu" role="menubar">
+                <li role="menuitem"><a href="#home" class="nav-link">Home</a></li>
+                <li role="menuitem"><a href="#tryon" class="nav-link">Virtual Try-On</a></li>
+                <li role="menuitem"><a href="#collection" class="nav-link">Collection</a></li>
+                <li role="menuitem"><a href="#about" class="nav-link">About</a></li>
+                <li role="menuitem">
+                    <a href="#cart" class="nav-link cart-link" onclick="openCart(); return false;" data-testid="cart-link">
+                        🛒 Cart <span id="cart-count" class="cart-badge" aria-label="Items in cart">0</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero" id="home">
+    <section class="hero" id="home" aria-label="Welcome section">
         <div class="hero-content">
             <h1>Discover Your Perfect Style</h1>
             <p>Try on clothes virtually and shop with confidence using Dressify's advanced try-on technology</p>
-            <button class="cta-btn" onclick="document.querySelector('.try-on-section').scrollIntoView({behavior: 'smooth'})">Start Virtual Try-On</button>
+            <button class="cta-btn" onclick="scrollToSection('#tryon')" aria-label="Start Virtual Try-On">
+                Start Virtual Try-On
+            </button>
             <div class="hero-stats">
                 <div class="stat">
                     <span class="stat-number">50K+</span>
@@ -50,7 +64,7 @@
     </section>
 
     <!-- Virtual Try-On Section -->
-    <section class="try-on-section" id="tryon">
+    <section class="try-on-section" id="tryon" aria-label="Virtual try-on">
         <div class="section-header">
             <h2>Virtual Try-On Mirror</h2>
             <p>Experience the future of fashion shopping</p>
@@ -58,7 +72,7 @@
         <div class="try-on-container">
             <div class="try-on-area">
                 <div class="mirror-wrapper">
-                    <div class="mirror">
+                    <div class="mirror" role="img" aria-label="Virtual avatar mirror">
                         <div class="avatar-container">
                             <div class="avatar-body">
                                 <!-- Head -->
@@ -91,6 +105,9 @@
                         <span id="item-material"></span>
                         <span id="item-rating"></span>
                     </div>
+                    <button id="addToCartBtn" class="btn btn-primary" style="display:none; width: 100%; margin-top: 1.5rem;" onclick="addSelectedToCart()">
+                        🛒 Add to Cart
+                    </button>
                 </div>
             </div>
 
@@ -98,15 +115,19 @@
             <div class="product-selection">
                 <div class="selection-header">
                     <h3>Browse Collection</h3>
-                    <p>Choose from 50+ premium items</p>
+                    <p>Choose from <span id="totalProducts">18</span> premium items</p>
                 </div>
-                <div class="product-tabs">
-                    <button class="tab-btn active" onclick="filterProducts('all')">All Items</button>
-                    <button class="tab-btn" onclick="filterProducts('tops')">👔 Tops</button>
-                    <button class="tab-btn" onclick="filterProducts('bottoms')">👖 Bottoms</button>
-                    <button class="tab-btn" onclick="filterProducts('shoes')">👠 Shoes</button>
+                <div class="product-tabs" role="tablist">
+                    <button class="tab-btn active" onclick="filterProducts('all')" role="tab" aria-selected="true">All Items</button>
+                    <button class="tab-btn" onclick="filterProducts('tops')" role="tab" aria-selected="false">👔 Tops</button>
+                    <button class="tab-btn" onclick="filterProducts('bottoms')" role="tab" aria-selected="false">👖 Bottoms</button>
+                    <button class="tab-btn" onclick="filterProducts('shoes')" role="tab" aria-selected="false">👠 Shoes</button>
                 </div>
-                <div class="products-grid" id="productsGrid">
+                <div class="search-box">
+                    <input type="search" id="productSearch" placeholder="Search products..." aria-label="Search products">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="products-grid" id="productsGrid" role="grid">
                     <!-- Products will be loaded here -->
                 </div>
             </div>
@@ -114,7 +135,7 @@
     </section>
 
     <!-- Why Choose Dressify -->
-    <section class="features-section">
+    <section class="features-section" aria-label="Features">
         <div class="section-header">
             <h2>Why Choose Dressify?</h2>
             <p>Experience the next generation of online shopping</p>
@@ -153,8 +174,47 @@
         </div>
     </section>
 
-    <!-- Featured/Trending Products Section -->
-    <section class="featured-section" id="collection">
+    <!-- AI Recommendations Section -->
+    <section class="ai-section" aria-label="AI Recommendations">
+        <div class="section-header">
+            <h2>✨ AI Style Recommendations</h2>
+            <p>Upload a photo and get personalized outfit suggestions</p>
+        </div>
+        <div class="ai-container">
+            <div class="photo-upload-area">
+                <div class="upload-box">
+                    <span class="upload-icon">📸</span>
+                    <h3>Upload Your Photo</h3>
+                    <p>Let our AI analyze and recommend the perfect outfits</p>
+                    <div class="upload-buttons">
+                        <button class="btn btn-primary" onclick="document.getElementById('photoInput').click()">📤 Upload Photo</button>
+                        <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+                    </div>
+                </div>
+                <div id="uploadedPhotoContainer" class="uploaded-photo-container" style="display:none;">
+                    <img id="uploadedPhoto" class="uploaded-photo" alt="Uploaded photo">
+                    <button class="btn btn-secondary" onclick="resetPhoto()">🔄 Change Photo</button>
+                </div>
+            </div>
+
+            <div class="ai-result-area">
+                <div id="noPhotoMessage" class="no-photo-message">
+                    Upload a photo to get started with AI recommendations
+                </div>
+                <div id="loadingIndicator" class="loading-indicator" style="display:none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing your style...</p>
+                </div>
+                <div id="recommendationResult" class="recommendation-result" style="display:none;">
+                    <h3>📋 Recommended Outfits</h3>
+                    <div id="recommendationsList" class="recommendations-list"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Collections Section -->
+    <section class="featured-section" id="collection" aria-label="Featured Products">
         <div class="section-header">
             <h2>Trending Collections</h2>
             <p>Handpicked selections from our fashion experts</p>
@@ -164,35 +224,61 @@
         </div>
     </section>
 
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal" role="dialog" aria-labelledby="cartTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="cartTitle">Shopping Cart</h2>
+                <button class="modal-close" onclick="closeCart()" aria-label="Close cart">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems" class="cart-items">
+                    <!-- Cart items will be loaded here -->
+                </div>
+                <div id="emptyCartMessage" class="empty-cart" style="display:none;">
+                    <p>Your cart is empty</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="cart-summary">
+                    <p>Subtotal: <span id="subtotal">$0.00</span></p>
+                    <p>Tax (10%): <span id="tax">$0.00</span></p>
+                    <p class="total">Total: <span id="total">$0.00</span></p>
+                </div>
+                <button class="btn btn-primary" onclick="checkout()" style="width:100%;">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Newsletter Section -->
-    <section class="newsletter-section">
+    <section class="newsletter-section" aria-label="Newsletter signup">
         <div class="newsletter-content">
             <h2>Stay Updated</h2>
             <p>Subscribe to get exclusive offers and styling tips</p>
             <div class="newsletter-form">
-                <input type="email" placeholder="Enter your email" class="newsletter-input">
-                <button class="newsletter-btn">Subscribe</button>
+                <input type="email" placeholder="Enter your email" class="newsletter-input" id="emailInput" aria-label="Email address">
+                <button class="newsletter-btn" onclick="subscribeNewsletter()">Subscribe</button>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer" id="about">
+    <footer class="footer" id="about" role="contentinfo">
         <div class="footer-content">
             <div class="footer-section">
                 <h4>About Dressify</h4>
                 <p>Dressify is revolutionizing online fashion with virtual try-on technology, helping customers shop with confidence and style.</p>
                 <div class="social-links">
-                    <a href="#">Facebook</a>
-                    <a href="#">Instagram</a>
-                    <a href="#">Twitter</a>
+                    <a href="#" aria-label="Follow on Facebook">Facebook</a>
+                    <a href="#" aria-label="Follow on Instagram">Instagram</a>
+                    <a href="#" aria-label="Follow on Twitter">Twitter</a>
                 </div>
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="#">Shop</a></li>
-                    <li><a href="#">Collections</a></li>
+                    <li><a href="#collection">Shop</a></li>
+                    <li><a href="#collection">Collections</a></li>
                     <li><a href="#">New Arrivals</a></li>
                     <li><a href="#">Sale</a></li>
                 </ul>
@@ -219,6 +305,9 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Notification Container -->
+    <div id="notificationContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="app.js" defer></script>
 </body>
 </html>
