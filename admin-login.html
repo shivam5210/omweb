@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dressify Admin Login - Manage your fashion store">
+    <meta name="theme-color" content="#667eea">
+    <title>Dressify Admin Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f5576c;
+            --dark-bg: #2c3e50;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --transition: all 0.3s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(400px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Login Container */
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            animation: slideUp 0.6s ease;
+        }
+
+        .login-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: pulse 2s ease infinite;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* Form Styles */
+        .login-form {
+            animation: slideUp 0.8s ease 0.2s both;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition);
+            background: var(--light-bg);
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-light);
+        }
+
+        .form-input.error,
+        .form-select.error {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .form-input.success,
+        .form-select.success {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Remember Me */
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .remember-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .remember-check input {
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .forgot-password:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 1.1rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .login-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Sign Up Link */
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .signup-link a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* Demo Credentials Alert */
+        .demo-alert {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--info);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            animation: slideUp 0.6s ease 0.3s both;
+        }
+
+        .demo-alert strong {
+            color: var(--info);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-credentials {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification-success {
+            background: var(--success);
+        }
+
+        .notification-error {
+            background: var(--error);
+        }
+
+        .notification-info {
+            background: var(--info);
+        }
+
+        .notification-warning {
+            background: var(--warning);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .logo-text {
+                font-size: 1.5rem;
+            }
+
+            .logo-icon {
+                font-size: 3rem;
+            }
+
+            .login-container {
+                padding: 1rem;
+            }
+
+            .notification {
+                left: 10px;
+                right: 10px;
+                max-width: none;
+            }
+        }
+
+        /* Eyes Animation for Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .password-input-wrapper {
+            position: relative;
+        }
+
+        .form-input-password {
+            padding-right: 2.8rem;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-box">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <span class="logo-icon">👗</span>
+                <h1 class="logo-text">Dressify</h1>
+                <p class="logo-subtitle">Admin Panel</p>
+            </div>
+
+            <!-- Demo Credentials Alert -->
+            <div class="demo-alert">
+                <strong>📝 Demo Credentials:</strong>
+                <div class="demo-credentials">
+                    <div>Email: admin@dressify.com</div>
+                    <div>Password: admin123</div>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form" id="loginForm">
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label class="form-label" for="email">📧 Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-input" 
+                        placeholder="Enter your email"
+                        required
+                        autocomplete="email"
+                    >
+                    <div class="error-message" id="emailError"></div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label class="form-label" for="password">🔐 Password</label>
+                    <div class="password-input-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            class="form-input form-input-password" 
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button 
+                            type="button" 
+                            class="password-toggle" 
+                            id="passwordToggle"
+                            title="Toggle password visibility"
+                        >👁️</button>
+                    </div>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="form-footer">
+                    <label class="remember-check">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password" onclick="handleForgotPassword(event)">Forgot Password?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-btn" id="loginBtn">
+                    Login to Dashboard
+                </button>
+
+                <!-- Sign Up Link -->
+                <p class="signup-link">
+                    Don't have an account? <a href="#" onclick="showNotification('Contact the administrator to create an account', 'info'); return false;">Request Access</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        'use strict';
+
+        // Demo credentials
+        const VALID_CREDENTIALS = {
+            email: 'admin@dressify.com',
+            password: 'admin123'
+        };
+
+        // Session duration (24 hours)
+        const SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+        // ============== UTILITY FUNCTIONS ==============
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId);
+            const inputElement = document.getElementById(fieldId.replace('Error', ''));
+            
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+                inputElement.classList.add('error');
+            }
+        }
+
+        function clearError(fieldId) {
+            const errorElement = document.getElementById(fieldId);
+            const inputElement = document.getElementById(fieldId.replace('Error', ''));
+            
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.classList.remove('show');
+                inputElement.classList.remove('error');
+                inputElement.classList.add('success');
+            }
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function setLoadingState(isLoading) {
+            const btn = document.getElementById('loginBtn');
+            const overlay = document.getElementById('loadingOverlay');
+            
+            if (isLoading) {
+                btn.classList.add('loading');
+                btn.disabled = true;
+                overlay.classList.add('show');
+            } else {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                overlay.classList.remove('show');
+            }
+        }
+
+        // ============== PASSWORD TOGGLE ==============
+        document.getElementById('passwordToggle').addEventListener('click', (e) => {
+            e.preventDefault();
+            const passwordInput = document.getElementById('password');
+            const toggle = document.getElementById('passwordToggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        });
+
+        // ============== FORM VALIDATION ==============
+        document.getElementById('email').addEventListener('blur', function() {
+            if (!this.value) {
+                showError('emailError', 'Email is required');
+            } else if (!validateEmail(this.value)) {
+                showError('emailError', 'Please enter a valid email');
+            } else {
+                clearError('emailError');
+            }
+        });
+
+        document.getElementById('password').addEventListener('blur', function() {
+            if (!this.value) {
+                showError('passwordError', 'Password is required');
+            } else if (this.value.length < 4) {
+                showError('passwordError', 'Password must be at least 4 characters');
+            } else {
+                clearError('passwordError');
+            }
+        });
+
+        // ============== FORM SUBMISSION ==============
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Validation
+            if (!email || !validateEmail(email)) {
+                showError('emailError', 'Please enter a valid email');
+                return;
+            }
+
+            if (!password || password.length < 4) {
+                showError('passwordError', 'Please enter your password');
+                return;
+            }
+
+            setLoadingState(true);
+
+            // Simulate API call (in production, connect to real backend)
+            setTimeout(() => {
+                if (email === VALID_CREDENTIALS.email && password === VALID_CREDENTIALS.password) {
+                    // Store session
+                    const sessionData = {
+                        email: email,
+                        loginTime: new Date().toISOString(),
+                        expiresAt: new Date(Date.now() + SESSION_DURATION).toISOString(),
+                        rememberMe: rememberMe
+                    };
+
+                    localStorage.setItem('adminSession', JSON.stringify(sessionData));
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+
+                    // If remember me is checked, save credentials (in production use secure method)
+                    if (rememberMe) {
+                        localStorage.setItem('adminEmail', email);
+                    }
+
+                    showNotification('✅ Login successful! Redirecting...', 'success');
+                    
+                    // Redirect to admin panel after 1 second
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1000);
+                } else {
+                    setLoadingState(false);
+                    showNotification('❌ Invalid email or password', 'error');
+                    
+                    if (email !== VALID_CREDENTIALS.email) {
+                        showError('emailError', 'Email not found');
+                    }
+                    if (password !== VALID_CREDENTIALS.password) {
+                        showError('passwordError', 'Incorrect password');
+                    }
+                }
+            }, 1500); // Simulate network delay
+        });
+
+        // ============== FORGOT PASSWORD ==============
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            showNotification('📧 Password reset link sent to your email (Demo only)', 'info');
+        }
+
+        // ============== LOAD SAVED EMAIL ==============
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('adminEmail');
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('password').focus();
+            }
+        });
+
+        // ============== CHECK IF ALREADY LOGGED IN ==============
+        window.addEventListener('load', () => {
+            const isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+            const sessionData = JSON.parse(localStorage.getItem('adminSession') || '{}');
+
+            if (isLoggedIn && sessionData.expiresAt) {
+                const expiresAt = new Date(sessionData.expiresAt);
+                if (new Date() < expiresAt) {
+                    // Session still valid, redirect to admin
+                    window.location.href = 'admin.html';
+                } else {
+                    // Session expired
+                    localStorage.removeItem('isAdminLoggedIn');
+                    localStorage.removeItem('adminSession');
+                    showNotification('⏱️ Session expired. Please login again.', 'warning');
+                }
+            }
+        });
+
+        console.log('✅ Admin Login Page Loaded');
+    </script>
+</body>
+</html>

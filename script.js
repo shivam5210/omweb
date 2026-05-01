@@ -1,11 +1,18 @@
-// Enhanced Product Database
+// =====================================================
+// 🔥 DRESSIFY - ENHANCED DYNAMIC E-COMMERCE PLATFORM
+// =====================================================
+
+// Enhanced Product Database with Numeric Prices & Discounts
 const products = [
     // TOPS
     {
         id: 1,
         name: 'Classic Blue T-Shirt',
         category: 'tops',
-        price: '$29.99',
+        price: 29.99,
+        discount: 0,
+        tags: ['casual', 'blue', 'tshirt'],
+        reviews: 234,
         image: 'https://via.placeholder.com/300x300/3498db/ffffff?text=Blue+Tshirt',
         tryOnImage: 'https://via.placeholder.com/180x120/3498db/ffffff?text=Blue+Top',
         description: 'Comfortable and stylish classic blue t-shirt for everyday wear.',

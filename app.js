@@ -1,8 +1,40 @@
 // =====================================================
-// 🔥 DRESSIFY - ADVANCED DYNAMIC E-COMMERCE PLATFORM
+// 🔥 DRESSIFY - ENHANCED DYNAMIC E-COMMERCE PLATFORM v2.0
 // =====================================================
+// Advanced State Management, Error Handling & Dynamic Features
 
-// Enhanced Product Database with Dynamic Data
+'use strict';
+
+// ============== GLOBAL ERROR HANDLER ==============
+window.addEventListener('error', (event) => {
+    console.error('Global error:', event.error);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled Promise Rejection:', event.reason);
+});
+
+// ============== UTILITY CLASSES ==============
+class ErrorHandler {
+    static handle(error, context = '') {
+        const message = error.message || String(error);
+        console.error(`[${context}] ${message}`, error);
+        showNotification(`❌ ${context}: ${message}`, 'error');
+        return { error: true, message };
+    }
+
+    static validate(condition, message) {
+        if (!condition) throw new Error(message);
+    }
+
+    static validateObject(obj, requiredFields) {
+        requiredFields.forEach(field => {
+            if (!(field in obj)) throw new Error(`Missing required field: ${field}`);
+        });
+    }
+}
+
+// Enhanced Product Database with NUMERIC prices
 const products = [
     // TOPS
     { id: 1, name: 'Classic Blue T-Shirt', category: 'tops', price: 29.99, image: 'https://via.placeholder.com/300x300/3498db/ffffff?text=Blue+Tshirt', tryOnImage: 'https://via.placeholder.com/180x120/3498db/ffffff?text=Blue+Top', description: 'Comfortable and stylish classic blue t-shirt for everyday wear.', material: 'Cotton', rating: 4.8, reviews: 234, type: 'upper', style: ['casual', 'versatile'], skinTone: ['all'], tags: ['casual', 'blue', 'tshirt'], discount: 0 },
@@ -90,15 +122,31 @@ const appState = {
 
 // ============== INITIALIZATION ==============
 document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
+    try {
+        console.log('🚀 Initializing Dressify v2.0...');
+        initializeApp();
+        setupEventListeners();
+        setupMobileMenu();
+        console.log('✅ Dressify initialized successfully');
+    } catch (error) {
+        console.error('❌ Initialization error:', error);
+        showAdminNotification('⚠️ App initialization error', 'error');
+    }
 });
 
 function initializeApp() {
+    console.log('Loading products...');
     loadProducts('all');
     loadFeaturedProducts();
     updateCartUI();
-    setupEventListeners();
-    setupMobileMenu();
+    
+    // Verify critical DOM elements exist
+    const criticalElements = ['productsGrid', 'cart-count', 'navMenu'];
+    criticalElements.forEach(id => {
+        if (!document.getElementById(id)) {
+            console.warn(`⚠️ Missing critical element: ${id}`);
+        }
+    });
 }
 
 // ============== EVENT LISTENERS ==============

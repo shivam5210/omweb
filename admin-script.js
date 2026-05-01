@@ -1,4 +1,61 @@
-// Admin Panel Script
+// =====================================================
+// 🔥 DRESSIFY ADMIN PANEL - ENHANCED VERSION 2.0
+// =====================================================
+// Better Error Handling, Input Validation & Dynamic Features
+
+'use strict';
+
+// ============== GLOBAL ERROR HANDLER ==============
+window.addEventListener('error', (event) => {
+    console.error('Admin Error:', event.error);
+    showAdminNotification('⚠️ An error occurred', 'error');
+});
+
+// ============== UTILITY FUNCTIONS ==============
+function showAdminNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${getNotificationColor(type)};
+        color: white;
+        border-radius: 8px;
+        z-index: 10000;
+        animation: slideInRight 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-width: 400px;
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+function getNotificationColor(type) {
+    const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        info: '#3b82f6',
+        warning: '#f59e0b'
+    };
+    return colors[type] || colors.info;
+}
+
+function validateInput(input, type = 'text') {
+    switch(type) {
+        case 'email':
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
+        case 'price':
+            return /^\d+(\.\d{2})?$/.test(input) && parseFloat(input) > 0;
+        case 'number':
+            return !isNaN(input) && input.trim() !== '';
+        case 'text':
+        default:
+            return input.trim().length > 0;
+    }
+}
 
 // Data Storage (using localStorage)
 class AdminStore {
@@ -290,19 +347,46 @@ function openProductModal() {
     try {
         currentEditingProduct = null;
         const form = document.getElementById('productForm');
-        if (form) form.reset();
+        if (form) {
+            form.reset();
+            // Add real-time validation listeners
+            addFormValidation(form);
+        }
         const modal = document.getElementById('productModal');
-        if (modal) modal.classList.add('active');
+        if (modal) {
+            modal.classList.add('active');
+            modal.style.animation = 'slideUp 0.3s ease';
+        }
+        showAdminNotification('✓ Form ready for new product', 'info');
     } catch (error) {
         console.error('Error opening product modal:', error);
-        showToast('Error opening form', 'error');
+        showAdminNotification('Error opening form: ' + error.message, 'error');
     }
+}
+
+function addFormValidation(form) {
+    const inputs = form.querySelectorAll('input[type="text"], input[type="number"], textarea');
+    inputs.forEach(input => {
+        input.addEventListener('blur', () => {
+            const type = input.type === 'number' ? 'number' : 'text';
+            if (!validateInput(input.value, type)) {
+                input.style.borderColor = '#ef4444';
+                input.title = 'Please enter a valid value';
+            } else {
+                input.style.borderColor = '#10b981';
+                input.title = '';
+            }
+        });
+    });
 }
 
 function closeProductModal() {
     try {
         const modal = document.getElementById('productModal');
-        if (modal) modal.classList.remove('active');
+        if (modal) {
+            modal.style.animation = 'slideDown 0.3s ease';
+            setTimeout(() => modal.classList.remove('active'), 300);
+        }
         currentEditingProduct = null;
     } catch (error) {
         console.error('Error closing product modal:', error);
