@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dressify Admin Panel</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Dressify Admin</h2>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <span class="icon">📊</span> Dashboard
+                </a>
+                <a href="#products" class="nav-item" data-section="products">
+                    <span class="icon">👗</span> Products
+                </a>
+                <a href="#shop-info" class="nav-item" data-section="shop-info">
+                    <span class="icon">🏪</span> Shop Info
+                </a>
+                <a href="#categories" class="nav-item" data-section="categories">
+                    <span class="icon">📂</span> Categories
+                </a>
+                <a href="#settings" class="nav-item" data-section="settings">
+                    <span class="icon">⚙️</span> Settings
+                </a>
+                <a href="index.html" class="nav-item logout">
+                    <span class="icon">🚪</span> Back to Store
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <span class="admin-user">👤 Admin</span>
+                    <span class="last-sync" id="lastSync">Last synced: now</span>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👗</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Total Products</div>
+                            <div class="stat-value" id="totalProducts">18</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📂</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Categories</div>
+                            <div class="stat-value" id="totalCategories">3</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Avg Price</div>
+                            <div class="stat-value" id="avgPrice">$59.99</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value status-online">Online</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="switchSection('products')">➕ Add Product</button>
+                        <button class="btn btn-secondary" onclick="switchSection('shop-info')">✏️ Edit Shop Info</button>
+                        <button class="btn btn-secondary" onclick="exportData()">📥 Export Data</button>
+                        <button class="btn btn-secondary" onclick="backupData()">💾 Backup</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products" class="section">
+                <div class="section-header">
+                    <h2>Manage Products</h2>
+                    <button class="btn btn-primary" onclick="openProductModal()">+ Add New Product</button>
+                </div>
+
+                <div class="filters">
+                    <input type="text" id="productSearch" placeholder="Search products..." class="search-input">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="tops">Tops</option>
+                        <option value="bottoms">Bottoms</option>
+                        <option value="shoes">Shoes</option>
+                    </select>
+                </div>
+
+                <div class="products-table-wrapper">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Material</th>
+                                <th>Rating</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Shop Info Section -->
+            <section id="shop-info" class="section">
+                <div class="section-header">
+                    <h2>Shop Information</h2>
+                </div>
+
+                <form id="shopInfoForm" class="form-grid">
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        
+                        <div class="form-group">
+                            <label>Shop Name</label>
+                            <input type="text" id="shopName" placeholder="Enter shop name" value="Dressify">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Shop Description</label>
+                            <textarea id="shopDescription" placeholder="Enter shop description" rows="4">Revolutionary online fashion shopping with advanced virtual try-on technology</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Shop Logo URL</label>
+                            <input type="url" id="shopLogo" placeholder="Enter logo URL" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Primary Color</label>
+                            <input type="color" id="primaryColor" value="#667eea">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Secondary Color</label>
+                            <input type="color" id="secondaryColor" value="#f5576c">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Contact Information</h3>
+                        
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="shopEmail" placeholder="contact@dressify.com" value="support@dressify.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="shopPhone" placeholder="+1 (555) 000-0000" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Street Address</label>
+                            <input type="text" id="shopStreet" placeholder="123 Fashion Ave" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="shopCity" placeholder="New York" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>State/Province</label>
+                            <input type="text" id="shopState" placeholder="NY" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>ZIP/Postal Code</label>
+                            <input type="text" id="shopZip" placeholder="10001" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" id="shopCountry" placeholder="United States" value="">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Social Links</h3>
+                        
+                        <div class="form-group">
+                            <label>Instagram</label>
+                            <input type="url" id="socialInstagram" placeholder="https://instagram.com/dressify" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Facebook</label>
+                            <input type="url" id="socialFacebook" placeholder="https://facebook.com/dressify" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Twitter</label>
+                            <input type="url" id="socialTwitter" placeholder="https://twitter.com/dressify" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Website</label>
+                            <input type="url" id="socialWebsite" placeholder="https://dressify.com" value="https://omweb.vercel.app">
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="grid-column: 1 / -1;">
+                        <button type="button" class="btn btn-primary" onclick="saveShopInfo()">💾 Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetShopInfo()">↺ Reset</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Categories Section -->
+            <section id="categories" class="section">
+                <div class="section-header">
+                    <h2>Manage Categories</h2>
+                    <button class="btn btn-primary" onclick="openCategoryModal()">+ Add Category</button>
+                </div>
+
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="setting-card">
+                        <h3>🔐 Security</h3>
+                        <button class="btn btn-secondary" onclick="changePassword()">Change Admin Password</button>
+                    </div>
+
+                    <div class="setting-card">
+                        <h3>📦 Data Management</h3>
+                        <button class="btn btn-secondary" onclick="exportData()">Export Data</button>
+                        <button class="btn btn-secondary" onclick="backupData()">Create Backup</button>
+                    </div>
+
+                    <div class="setting-card">
+                        <h3>🔄 Sync</h3>
+                        <button class="btn btn-secondary" onclick="syncData()">Sync All Data</button>
+                        <p><small id="syncStatus">Status: Ready</small></p>
+                    </div>
+
+                    <div class="setting-card">
+                        <h3>🗑️ Danger Zone</h3>
+                        <button class="btn btn-danger" onclick="resetAllData()">Reset All Data</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add/Edit Product</h2>
+                <button class="modal-close" onclick="closeProductModal()">&times;</button>
+            </div>
+            <form id="productForm" class="modal-form">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="productName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="productCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="tops">Tops</option>
+                        <option value="bottoms">Bottoms</option>
+                        <option value="shoes">Shoes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Price ($) *</label>
+                    <input type="number" id="productPrice" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Material</label>
+                    <input type="text" id="productMaterial" placeholder="e.g., Cotton, Polyester">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="productDescription" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Product Image URL</label>
+                    <input type="url" id="productImage">
+                </div>
+
+                <div class="form-group">
+                    <label>Try-On Image URL</label>
+                    <input type="url" id="productTryOnImage">
+                </div>
+
+                <div class="form-group">
+                    <label>Type (for avatar) *</label>
+                    <select id="productType" required>
+                        <option value="">Select Type</option>
+                        <option value="upper">Upper</option>
+                        <option value="lower">Lower</option>
+                        <option value="shoes">Shoes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Rating (e.g., ★★★★★)</label>
+                    <input type="text" id="productRating" placeholder="★★★★★">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Save Product</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add/Edit Category</h2>
+                <button class="modal-close" onclick="closeCategoryModal()">&times;</button>
+            </div>
+            <form id="categoryForm" class="modal-form">
+                <div class="form-group">
+                    <label>Category Name *</label>
+                    <input type="text" id="categoryName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Category Icon/Emoji</label>
+                    <input type="text" id="categoryIcon" placeholder="👕" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="categoryDescription" rows="3"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Save Category</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
