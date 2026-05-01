@@ -140,256 +140,441 @@ class AdminStore {
     }
 }
 
+// Input Validation
+class Validator {
+    static validateProductForm(data) {
+        const errors = [];
+        
+        if (!data.name || data.name.trim().length === 0) {
+            errors.push('Product name is required');
+        }
+        if (!data.category) {
+            errors.push('Category is required');
+        }
+        if (!data.price || parseFloat(data.price) <= 0) {
+            errors.push('Price must be greater than 0');
+        }
+        if (!data.type) {
+            errors.push('Product type is required');
+        }
+        
+        return errors;
+    }
+
+    static validateShopInfo(data) {
+        const errors = [];
+        
+        if (!data.shopName || data.shopName.trim().length === 0) {
+            errors.push('Shop name is required');
+        }
+        if (data.shopEmail && !this.isValidEmail(data.shopEmail)) {
+            errors.push('Invalid email format');
+        }
+        
+        return errors;
+    }
+
+    static isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+}
+
 // UI Management
 let currentEditingProduct = null;
 
 function switchSection(sectionId) {
-    // Hide all sections
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    
-    // Show selected section
-    document.getElementById(sectionId).classList.add('active');
-    
-    // Update nav items
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.section === sectionId);
-    });
-    
-    // Update header
-    const titles = {
-        'dashboard': 'Dashboard',
-        'products': 'Manage Products',
-        'shop-info': 'Shop Information',
-        'categories': 'Manage Categories',
-        'settings': 'Settings'
-    };
-    document.getElementById('page-title').textContent = titles[sectionId] || 'Admin Panel';
-    
-    // Load section-specific data
-    if (sectionId === 'products') {
-        loadProductsTable();
-    } else if (sectionId === 'categories') {
-        loadCategoriesGrid();
+    try {
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        
+        // Show selected section
+        const section = document.getElementById(sectionId);
+        if (!section) {
+            showToast('Section not found', 'error');
+            return;
+        }
+        
+        section.classList.add('active');
+        
+        // Update nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.section === sectionId);
+        });
+        
+        // Update header
+        const titles = {
+            'dashboard': 'Dashboard',
+            'products': 'Manage Products',
+            'shop-info': 'Shop Information',
+            'categories': 'Manage Categories',
+            'settings': 'Settings'
+        };
+        document.getElementById('page-title').textContent = titles[sectionId] || 'Admin Panel';
+        
+        // Load section-specific data
+        if (sectionId === 'products') {
+            loadProductsTable();
+        } else if (sectionId === 'categories') {
+            loadCategoriesGrid();
+        }
+    } catch (error) {
+        console.error('Error switching section:', error);
+        showToast('Error loading section', 'error');
     }
 }
 
 // Dashboard Functions
 function updateDashboard() {
-    const products = AdminStore.getProducts();
-    document.getElementById('totalProducts').textContent = products.length;
-    document.getElementById('totalCategories').textContent = AdminStore.getCategories().length;
-    
-    const avgPrice = (products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(2);
-    document.getElementById('avgPrice').textContent = '$' + avgPrice;
+    try {
+        const products = AdminStore.getProducts();
+        const categories = AdminStore.getCategories();
+        
+        document.getElementById('totalProducts').textContent = products.length;
+        document.getElementById('totalCategories').textContent = categories.length;
+        
+        if (products.length > 0) {
+            const avgPrice = (products.reduce((sum, p) => sum + p.price, 0) / products.length).toFixed(2);
+            document.getElementById('avgPrice').textContent = '$' + avgPrice;
+        }
+    } catch (error) {
+        console.error('Error updating dashboard:', error);
+        showToast('Error updating dashboard', 'error');
+    }
 }
 
 // Products Management
 function loadProductsTable() {
-    const products = AdminStore.getProducts();
-    const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-    const categoryFilter = document.getElementById('categoryFilter').value;
-    
-    let filtered = products.filter(p => {
-        const matchesSearch = p.name.toLowerCase().includes(searchTerm);
-        const matchesCategory = !categoryFilter || p.category === categoryFilter;
-        return matchesSearch && matchesCategory;
-    });
-    
-    const tbody = document.getElementById('productsTableBody');
-    tbody.innerHTML = filtered.map(product => `
-        <tr>
-            <td>${product.id}</td>
-            <td>${product.name}</td>
-            <td>${product.category}</td>
-            <td>$${product.price.toFixed(2)}</td>
-            <td>${product.material || '-'}</td>
-            <td>${product.rating || '★★★★☆'}</td>
-            <td>
-                <div class="action-buttons-table">
-                    <button class="btn btn-secondary btn-small" onclick="editProduct(${product.id})">✏️ Edit</button>
-                    <button class="btn btn-danger btn-small" onclick="deleteProduct(${product.id})">🗑️ Delete</button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
+    try {
+        const products = AdminStore.getProducts();
+        const searchTerm = document.getElementById('productSearch')?.value.toLowerCase() || '';
+        const categoryFilter = document.getElementById('categoryFilter')?.value || '';
+        
+        let filtered = products.filter(p => {
+            const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+            const matchesCategory = !categoryFilter || p.category === categoryFilter;
+            return matchesSearch && matchesCategory;
+        });
+        
+        const tbody = document.getElementById('productsTableBody');
+        if (!tbody) return;
+        
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #999;">No products found</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = filtered.map(product => `
+            <tr>
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>$${product.price.toFixed(2)}</td>
+                <td>${product.material || '-'}</td>
+                <td>${product.rating || '★★★★☆'}</td>
+                <td>
+                    <div class="action-buttons-table">
+                        <button class="btn btn-secondary btn-small" onclick="editProduct(${product.id})">✏️ Edit</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteProduct(${product.id})">🗑️ Delete</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading products table:', error);
+        showToast('Error loading products', 'error');
+    }
 }
 
 function openProductModal() {
-    currentEditingProduct = null;
-    document.getElementById('productForm').reset();
-    document.getElementById('productModal').classList.add('active');
+    try {
+        currentEditingProduct = null;
+        const form = document.getElementById('productForm');
+        if (form) form.reset();
+        const modal = document.getElementById('productModal');
+        if (modal) modal.classList.add('active');
+    } catch (error) {
+        console.error('Error opening product modal:', error);
+        showToast('Error opening form', 'error');
+    }
 }
 
 function closeProductModal() {
-    document.getElementById('productModal').classList.remove('active');
-    currentEditingProduct = null;
+    try {
+        const modal = document.getElementById('productModal');
+        if (modal) modal.classList.remove('active');
+        currentEditingProduct = null;
+    } catch (error) {
+        console.error('Error closing product modal:', error);
+    }
 }
 
 function editProduct(id) {
-    const products = AdminStore.getProducts();
-    const product = products.find(p => p.id === id);
-    
-    if (!product) return;
-    
-    currentEditingProduct = id;
-    document.getElementById('productName').value = product.name;
-    document.getElementById('productCategory').value = product.category;
-    document.getElementById('productPrice').value = product.price;
-    document.getElementById('productMaterial').value = product.material || '';
-    document.getElementById('productDescription').value = product.description || '';
-    document.getElementById('productImage').value = product.image || '';
-    document.getElementById('productTryOnImage').value = product.tryOnImage || '';
-    document.getElementById('productType').value = product.type || '';
-    document.getElementById('productRating').value = product.rating || '';
-    
-    document.getElementById('productModal').classList.add('active');
+    try {
+        const products = AdminStore.getProducts();
+        const product = products.find(p => p.id === id);
+        
+        if (!product) {
+            showToast('Product not found', 'error');
+            return;
+        }
+        
+        currentEditingProduct = id;
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productCategory').value = product.category;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productMaterial').value = product.material || '';
+        document.getElementById('productDescription').value = product.description || '';
+        document.getElementById('productImage').value = product.image || '';
+        document.getElementById('productTryOnImage').value = product.tryOnImage || '';
+        document.getElementById('productType').value = product.type || '';
+        document.getElementById('productRating').value = product.rating || '';
+        
+        document.getElementById('productModal').classList.add('active');
+    } catch (error) {
+        console.error('Error editing product:', error);
+        showToast('Error loading product', 'error');
+    }
 }
 
 function deleteProduct(id) {
     if (confirm('Are you sure you want to delete this product?')) {
-        let products = AdminStore.getProducts();
-        products = products.filter(p => p.id !== id);
-        AdminStore.setProducts(products);
-        loadProductsTable();
-        showToast('Product deleted successfully', 'success');
-        updateDashboard();
+        try {
+            let products = AdminStore.getProducts();
+            products = products.filter(p => p.id !== id);
+            AdminStore.setProducts(products);
+            loadProductsTable();
+            showToast('Product deleted successfully', 'success');
+            updateDashboard();
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            showToast('Error deleting product', 'error');
+        }
     }
 }
 
 document.getElementById('productForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const products = AdminStore.getProducts();
-    
-    const productData = {
-        id: currentEditingProduct || Math.max(...products.map(p => p.id), 0) + 1,
-        name: document.getElementById('productName').value,
-        category: document.getElementById('productCategory').value,
-        price: parseFloat(document.getElementById('productPrice').value),
-        material: document.getElementById('productMaterial').value,
-        description: document.getElementById('productDescription').value,
-        image: document.getElementById('productImage').value,
-        tryOnImage: document.getElementById('productTryOnImage').value,
-        type: document.getElementById('productType').value,
-        rating: document.getElementById('productRating').value
-    };
-    
-    if (currentEditingProduct) {
-        const index = products.findIndex(p => p.id === currentEditingProduct);
-        products[index] = productData;
-    } else {
-        products.push(productData);
+    try {
+        const products = AdminStore.getProducts();
+        
+        const productData = {
+            id: currentEditingProduct || Math.max(...products.map(p => p.id), 0) + 1,
+            name: document.getElementById('productName').value.trim(),
+            category: document.getElementById('productCategory').value,
+            price: parseFloat(document.getElementById('productPrice').value),
+            material: document.getElementById('productMaterial').value.trim(),
+            description: document.getElementById('productDescription').value.trim(),
+            image: document.getElementById('productImage').value.trim(),
+            tryOnImage: document.getElementById('productTryOnImage').value.trim(),
+            type: document.getElementById('productType').value,
+            rating: document.getElementById('productRating').value.trim()
+        };
+        
+        // Validate
+        const errors = Validator.validateProductForm(productData);
+        if (errors.length > 0) {
+            showToast(errors[0], 'error');
+            return;
+        }
+        
+        if (currentEditingProduct) {
+            const index = products.findIndex(p => p.id === currentEditingProduct);
+            if (index !== -1) {
+                products[index] = productData;
+            }
+        } else {
+            products.push(productData);
+        }
+        
+        AdminStore.setProducts(products);
+        closeProductModal();
+        loadProductsTable();
+        showToast(currentEditingProduct ? 'Product updated!' : 'Product added!', 'success');
+        updateDashboard();
+    } catch (error) {
+        console.error('Error saving product:', error);
+        showToast('Error saving product', 'error');
     }
-    
-    AdminStore.setProducts(products);
-    closeProductModal();
-    loadProductsTable();
-    showToast(currentEditingProduct ? 'Product updated!' : 'Product added!', 'success');
-    updateDashboard();
 });
 
 // Shop Info Management
 function loadShopInfo() {
-    const info = AdminStore.getShopInfo();
-    Object.keys(info).forEach(key => {
-        const input = document.getElementById(key);
-        if (input) input.value = info[key];
-    });
+    try {
+        const info = AdminStore.getShopInfo();
+        Object.keys(info).forEach(key => {
+            const input = document.getElementById(key);
+            if (input) input.value = info[key];
+        });
+    } catch (error) {
+        console.error('Error loading shop info:', error);
+        showToast('Error loading shop information', 'error');
+    }
 }
 
 function saveShopInfo() {
-    const info = {};
-    document.querySelectorAll('#shopInfoForm [id]').forEach(input => {
-        info[input.id] = input.value;
-    });
-    AdminStore.setShopInfo(info);
-    showToast('Shop information saved successfully!', 'success');
+    try {
+        const info = {};
+        document.querySelectorAll('#shopInfoForm [id]').forEach(input => {
+            info[input.id] = input.value.trim();
+        });
+        
+        // Validate
+        const errors = Validator.validateShopInfo(info);
+        if (errors.length > 0) {
+            showToast(errors[0], 'error');
+            return;
+        }
+        
+        AdminStore.setShopInfo(info);
+        showToast('Shop information saved successfully!', 'success');
+    } catch (error) {
+        console.error('Error saving shop info:', error);
+        showToast('Error saving shop information', 'error');
+    }
 }
 
 function resetShopInfo() {
-    loadShopInfo();
-    showToast('Form reset', 'info');
+    try {
+        loadShopInfo();
+        showToast('Form reset', 'info');
+    } catch (error) {
+        console.error('Error resetting shop info:', error);
+    }
 }
 
 // Categories Management
 function loadCategoriesGrid() {
-    const categories = AdminStore.getCategories();
-    const products = AdminStore.getProducts();
-    
-    const grid = document.getElementById('categoriesGrid');
-    grid.innerHTML = categories.map(cat => {
-        const count = products.filter(p => p.category === cat.name.toLowerCase()).length;
-        return `
-            <div class="category-card">
-                <div class="category-icon">${cat.icon}</div>
-                <div class="category-name">${cat.name}</div>
-                <div class="category-count">${count} products</div>
-                <div class="category-actions">
-                    <button class="btn btn-secondary btn-small" onclick="editCategory(${cat.id})">Edit</button>
-                    <button class="btn btn-danger btn-small" onclick="deleteCategory(${cat.id})">Delete</button>
+    try {
+        const categories = AdminStore.getCategories();
+        const products = AdminStore.getProducts();
+        
+        const grid = document.getElementById('categoriesGrid');
+        if (!grid) return;
+        
+        if (categories.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #999;">No categories found</p>';
+            return;
+        }
+        
+        grid.innerHTML = categories.map(cat => {
+            const count = products.filter(p => p.category === cat.name.toLowerCase()).length;
+            return `
+                <div class="category-card">
+                    <div class="category-icon">${cat.icon}</div>
+                    <div class="category-name">${cat.name}</div>
+                    <div class="category-count">${count} products</div>
+                    <div class="category-actions">
+                        <button class="btn btn-secondary btn-small" onclick="editCategory(${cat.id})">Edit</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteCategory(${cat.id})">Delete</button>
+                    </div>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error loading categories:', error);
+        showToast('Error loading categories', 'error');
+    }
 }
 
 function openCategoryModal() {
-    document.getElementById('categoryForm').reset();
-    document.getElementById('categoryModal').classList.add('active');
+    try {
+        const form = document.getElementById('categoryForm');
+        if (form) form.reset();
+        const modal = document.getElementById('categoryModal');
+        if (modal) modal.classList.add('active');
+    } catch (error) {
+        console.error('Error opening category modal:', error);
+        showToast('Error opening form', 'error');
+    }
 }
 
 function closeCategoryModal() {
-    document.getElementById('categoryModal').classList.remove('active');
+    try {
+        const modal = document.getElementById('categoryModal');
+        if (modal) modal.classList.remove('active');
+    } catch (error) {
+        console.error('Error closing category modal:', error);
+    }
 }
 
 function editCategory(id) {
-    const categories = AdminStore.getCategories();
-    const category = categories.find(c => c.id === id);
-    
-    if (!category) return;
-    
-    document.getElementById('categoryName').value = category.name;
-    document.getElementById('categoryIcon').value = category.icon;
-    document.getElementById('categoryDescription').value = category.description || '';
-    document.getElementById('categoryModal').classList.add('active');
+    try {
+        const categories = AdminStore.getCategories();
+        const category = categories.find(c => c.id === id);
+        
+        if (!category) {
+            showToast('Category not found', 'error');
+            return;
+        }
+        
+        document.getElementById('categoryName').value = category.name;
+        document.getElementById('categoryIcon').value = category.icon;
+        document.getElementById('categoryDescription').value = category.description || '';
+        document.getElementById('categoryModal').classList.add('active');
+    } catch (error) {
+        console.error('Error editing category:', error);
+        showToast('Error loading category', 'error');
+    }
 }
 
 function deleteCategory(id) {
     if (confirm('Are you sure? Products in this category will not be deleted.')) {
-        let categories = AdminStore.getCategories();
-        categories = categories.filter(c => c.id !== id);
-        AdminStore.setCategories(categories);
-        loadCategoriesGrid();
-        showToast('Category deleted', 'success');
+        try {
+            let categories = AdminStore.getCategories();
+            categories = categories.filter(c => c.id !== id);
+            AdminStore.setCategories(categories);
+            loadCategoriesGrid();
+            showToast('Category deleted', 'success');
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            showToast('Error deleting category', 'error');
+        }
     }
 }
 
 // Utilities
 function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = 'toast ' + type;
-    
-    setTimeout(() => {
-        toast.className = 'toast';
-    }, 3000);
+    try {
+        const toast = document.getElementById('toast');
+        if (!toast) return;
+        
+        toast.textContent = message;
+        toast.className = 'toast ' + type;
+        
+        setTimeout(() => {
+            toast.className = 'toast';
+        }, 3000);
+    } catch (error) {
+        console.error('Error showing toast:', error);
+    }
 }
 
 function exportData() {
-    const data = {
-        products: AdminStore.getProducts(),
-        shopInfo: AdminStore.getShopInfo(),
-        categories: AdminStore.getCategories()
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `dressify-backup-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    
-    showToast('Data exported successfully!', 'success');
+    try {
+        const data = {
+            products: AdminStore.getProducts(),
+            shopInfo: AdminStore.getShopInfo(),
+            categories: AdminStore.getCategories(),
+            exportDate: new Date().toISOString()
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dressify-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast('Data exported successfully!', 'success');
+    } catch (error) {
+        console.error('Error exporting data:', error);
+        showToast('Error exporting data', 'error');
+    }
 }
 
 function backupData() {
@@ -397,40 +582,58 @@ function backupData() {
 }
 
 function syncData() {
-    const status = document.getElementById('syncStatus');
-    status.textContent = 'Status: Syncing...';
-    
-    setTimeout(() => {
-        AdminStore.updateMainStore();
-        status.textContent = 'Status: Synced!';
-        showToast('All data synced with main store!', 'success');
+    try {
+        const status = document.getElementById('syncStatus');
+        if (!status) return;
+        
+        status.textContent = 'Status: Syncing...';
         
         setTimeout(() => {
-            status.textContent = 'Status: Ready';
-        }, 2000);
-    }, 1000);
+            AdminStore.updateMainStore();
+            status.textContent = 'Status: Synced!';
+            showToast('All data synced with main store!', 'success');
+            
+            setTimeout(() => {
+                status.textContent = 'Status: Ready';
+            }, 2000);
+        }, 1000);
+    } catch (error) {
+        console.error('Error syncing data:', error);
+        showToast('Error syncing data', 'error');
+    }
 }
 
 function changePassword() {
-    const newPassword = prompt('Enter new admin password:');
-    if (newPassword && newPassword.length >= 6) {
-        localStorage.setItem('admin_password', btoa(newPassword));
-        showToast('Password changed successfully!', 'success');
-    } else if (newPassword !== null) {
-        showToast('Password must be at least 6 characters', 'warning');
+    try {
+        const newPassword = prompt('Enter new admin password (min 6 characters):');
+        if (newPassword && newPassword.length >= 6) {
+            localStorage.setItem('admin_password', btoa(newPassword));
+            showToast('Password changed successfully!', 'success');
+        } else if (newPassword !== null) {
+            showToast('Password must be at least 6 characters', 'warning');
+        }
+    } catch (error) {
+        console.error('Error changing password:', error);
+        showToast('Error changing password', 'error');
     }
 }
 
 function resetAllData() {
     if (confirm('⚠️ WARNING: This will reset ALL data to defaults. This cannot be undone!')) {
         if (confirm('Are you absolutely sure? Type "RESET" in the next prompt to confirm.')) {
-            const confirm = prompt('Type RESET to confirm:');
-            if (confirm === 'RESET') {
-                localStorage.removeItem('admin_products');
-                localStorage.removeItem('admin_shopInfo');
-                localStorage.removeItem('admin_categories');
-                localStorage.removeItem('products');
-                location.reload();
+            const confirmation = prompt('Type RESET to confirm:');
+            if (confirmation === 'RESET') {
+                try {
+                    localStorage.removeItem('admin_products');
+                    localStorage.removeItem('admin_shopInfo');
+                    localStorage.removeItem('admin_categories');
+                    localStorage.removeItem('products');
+                    showToast('All data reset successfully!', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } catch (error) {
+                    console.error('Error resetting data:', error);
+                    showToast('Error resetting data', 'error');
+                }
             }
         }
     }
@@ -451,22 +654,37 @@ document.getElementById('categoryFilter')?.addEventListener('change', loadProduc
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    updateDashboard();
-    loadShopInfo();
-    loadProductsTable();
-    loadCategoriesGrid();
-    
-    // Update last sync time
-    const updateSyncTime = () => {
-        const now = new Date();
-        document.getElementById('lastSync').textContent = `Last synced: ${now.toLocaleTimeString()}`;
-    };
-    
-    setInterval(updateSyncTime, 60000);
+    try {
+        updateDashboard();
+        loadShopInfo();
+        loadProductsTable();
+        loadCategoriesGrid();
+        
+        // Update last sync time
+        const updateSyncTime = () => {
+            const now = new Date();
+            const syncElement = document.getElementById('lastSync');
+            if (syncElement) {
+                syncElement.textContent = `Last synced: ${now.toLocaleTimeString()}`;
+            }
+        };
+        
+        updateSyncTime();
+        setInterval(updateSyncTime, 60000);
+    } catch (error) {
+        console.error('Error initializing admin panel:', error);
+        showToast('Error initializing admin panel', 'error');
+    }
 });
 
 // Mobile menu toggle
 document.getElementById('menuToggle')?.addEventListener('click', () => {
-    const navMenu = document.querySelector('.nav-menu');
-    navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+    try {
+        const navMenu = document.querySelector('.nav-menu');
+        if (navMenu) {
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        }
+    } catch (error) {
+        console.error('Error toggling menu:', error);
+    }
 });
