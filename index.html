@@ -25,6 +25,54 @@
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             }
         }
+
+        /* Admin button styles */
+        .admin-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, #f5576c, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            margin-left: auto;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+            background: linear-gradient(135deg, #ff6b6b, #f5576c);
+        }
+
+        .admin-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile responsive admin button */
+        @media (max-width: 768px) {
+            .admin-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+
+            .nav-container {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-menu.active {
+                margin-top: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -51,6 +99,9 @@
                     </a>
                 </li>
             </ul>
+            <a href="admin-login.html" class="admin-btn" title="Access Admin Panel">
+                ⚙️ Admin Panel
+            </a>
         </div>
     </nav>
 
