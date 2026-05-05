@@ -34,32 +34,48 @@ class ErrorHandler {
     }
 }
 
-// Enhanced Product Database with NUMERIC prices
-const products = [
-    // TOPS
-    { id: 1, name: 'Classic Blue T-Shirt', category: 'tops', price: 29.99, image: 'https://placehold.co/300x300/3498db/ffffff?text=Blue+Tshirt', tryOnImage: 'https://placehold.co/180x120/3498db/ffffff?text=Blue+Top', description: 'Comfortable and stylish classic blue t-shirt for everyday wear.', material: 'Cotton', rating: 4.8, reviews: 234, type: 'upper', style: ['casual', 'versatile'], skinTone: ['all'], tags: ['casual', 'blue', 'tshirt'], discount: 0 },
-    { id: 2, name: 'Red V-Neck', category: 'tops', price: 34.99, image: 'https://placehold.co/300x300/e74c3c/ffffff?text=Red+VNeck', tryOnImage: 'https://placehold.co/180x120/e74c3c/ffffff?text=Red+Top', description: 'Elegant red v-neck shirt perfect for any occasion.', material: 'Cotton-Blend', rating: 4.9, reviews: 189, type: 'upper', style: ['elegant', 'formal'], skinTone: ['fair', 'medium', 'dark'], tags: ['formal', 'red', 'elegant'], discount: 10 },
-    { id: 3, name: 'White Polo Shirt', category: 'tops', price: 39.99, image: 'https://placehold.co/300x300/ecf0f1/333333?text=White+Polo', tryOnImage: 'https://placehold.co/180x120/ecf0f1/333333?text=White+Top', description: 'Classic white polo shirt with collar detail.', material: 'Pique Cotton', rating: 4.7, reviews: 312, type: 'upper', style: ['formal', 'business'], skinTone: ['all'], tags: ['business', 'white', 'polo'], discount: 0 },
-    { id: 4, name: 'Black Hoodie', category: 'tops', price: 54.99, image: 'https://placehold.co/300x300/2c3e50/ffffff?text=Black+Hoodie', tryOnImage: 'https://placehold.co/180x120/2c3e50/ffffff?text=Black+Hoodie', description: 'Cozy black hoodie perfect for cold weather.', material: 'Cotton-Polyester', rating: 4.9, reviews: 456, type: 'upper', style: ['casual', 'sporty'], skinTone: ['all'], tags: ['casual', 'warm', 'black'], discount: 15 },
-    { id: 5, name: 'Striped Shirt', category: 'tops', price: 44.99, image: 'https://placehold.co/300x300/f39c12/ffffff?text=Striped+Shirt', tryOnImage: 'https://placehold.co/180x120/f39c12/ffffff?text=Striped+Top', description: 'Trendy striped shirt for a casual look.', material: 'Cotton', rating: 4.5, reviews: 167, type: 'upper', style: ['casual', 'trendy'], skinTone: ['fair', 'medium'], tags: ['trendy', 'casual', 'striped'], discount: 5 },
-    { id: 6, name: 'Designer Blazer', category: 'tops', price: 79.99, image: 'https://placehold.co/300x300/34495e/ffffff?text=Designer+Blazer', tryOnImage: 'https://placehold.co/180x120/34495e/ffffff?text=Blazer+Top', description: 'Professional designer blazer for formal occasions.', material: 'Wool Blend', rating: 4.9, reviews: 278, type: 'upper', style: ['formal', 'professional'], skinTone: ['all'], tags: ['professional', 'formal', 'blazer'], discount: 20 },
+// ============== GET PRODUCTS FROM ADMIN OR DEFAULT ==============
+function getProductsData() {
+    // First, try to get products from admin panel
+    const adminProducts = localStorage.getItem('admin_products');
+    if (adminProducts) {
+        try {
+            return JSON.parse(adminProducts);
+        } catch (e) {
+            console.warn('Error parsing admin products, using defaults');
+        }
+    }
+    
+    // Default products if no admin products exist
+    return [
+        // TOPS
+        { id: 1, name: 'Classic Blue T-Shirt', category: 'tops', price: 29.99, image: 'https://placehold.co/300x300/3498db/ffffff?text=Blue+Tshirt', tryOnImage: 'https://placehold.co/180x120/3498db/ffffff?text=Blue+Tshirt', type: 'upper', tags: ['casual'], discount: 0, rating: 4.5, reviews: 45, description: 'Comfortable cotton t-shirt', material: 'Cotton' },
+        { id: 2, name: 'Red V-Neck', category: 'tops', price: 34.99, image: 'https://placehold.co/300x300/e74c3c/ffffff?text=Red+VNeck', tryOnImage: 'https://placehold.co/180x120/e74c3c/ffffff?text=Red+VNeck', type: 'upper', tags: ['elegant'], discount: 0, rating: 4.3, reviews: 32, description: 'Elegant red v-neck', material: 'Polyester' },
+        { id: 3, name: 'White Polo Shirt', category: 'tops', price: 39.99, image: 'https://placehold.co/300x300/ecf0f1/333333?text=White+Polo', tryOnImage: 'https://placehold.co/180x120/ecf0f1/333333?text=White+Polo', type: 'upper', tags: ['formal'], discount: 0, rating: 4.7, reviews: 58, description: 'Classic polo shirt', material: 'Cotton Blend' },
+        { id: 4, name: 'Black Hoodie', category: 'tops', price: 54.99, image: 'https://placehold.co/300x300/2c3e50/ffffff?text=Black+Hoodie', tryOnImage: 'https://placehold.co/180x120/2c3e50/ffffff?text=Black+Hoodie', type: 'upper', tags: ['casual'], discount: 10, rating: 4.8, reviews: 92, description: 'Cozy black hoodie', material: 'Cotton' },
+        { id: 5, name: 'Striped Shirt', category: 'tops', price: 44.99, image: 'https://placehold.co/300x300/f39c12/ffffff?text=Striped+Shirt', tryOnImage: 'https://placehold.co/180x120/f39c12/ffffff?text=Striped+Shirt', type: 'upper', tags: ['casual'], discount: 5, rating: 4.4, reviews: 41, description: 'Trendy striped shirt', material: 'Linen' },
+        { id: 6, name: 'Designer Blazer', category: 'tops', price: 79.99, image: 'https://placehold.co/300x300/34495e/ffffff?text=Designer+Blazer', tryOnImage: 'https://placehold.co/180x120/34495e/ffffff?text=Designer+Blazer', type: 'upper', tags: ['formal'], discount: 15, rating: 4.9, reviews: 67, description: 'Professional blazer', material: 'Wool' },
 
-    // BOTTOMS
-    { id: 7, name: 'Blue Jeans', category: 'bottoms', price: 59.99, image: 'https://placehold.co/300x300/1e3a5f/ffffff?text=Blue+Jeans', tryOnImage: 'https://placehold.co/180x140/1e3a5f/ffffff?text=Blue+Jeans', description: 'Classic blue denim jeans for everyday wear.', material: 'Denim', rating: 4.8, reviews: 523, type: 'lower', style: ['casual', 'versatile'], skinTone: ['all'], tags: ['casual', 'denim', 'blue'], discount: 0 },
-    { id: 8, name: 'Black Pants', category: 'bottoms', price: 49.99, image: 'https://placehold.co/300x300/2c3e50/ffffff?text=Black+Pants', tryOnImage: 'https://placehold.co/180x140/2c3e50/ffffff?text=Black+Pants', description: 'Formal black pants perfect for work or events.', material: 'Polyester-Wool', rating: 4.8, reviews: 401, type: 'lower', style: ['formal', 'business'], skinTone: ['all'], tags: ['formal', 'black', 'work'], discount: 12 },
-    { id: 9, name: 'Khaki Chinos', category: 'bottoms', price: 44.99, image: 'https://placehold.co/300x300/d4af37/ffffff?text=Khaki+Chinos', tryOnImage: 'https://placehold.co/180x140/d4af37/ffffff?text=Khaki+Chinos', description: 'Versatile khaki chinos for casual to semi-formal looks.', material: 'Cotton Twill', rating: 4.6, reviews: 289, type: 'lower', style: ['casual', 'business'], skinTone: ['fair', 'medium'], tags: ['casual', 'chinos', 'versatile'], discount: 8 },
-    { id: 10, name: 'Gray Shorts', category: 'bottoms', price: 34.99, image: 'https://placehold.co/300x300/95a5a6/ffffff?text=Gray+Shorts', tryOnImage: 'https://placehold.co/180x140/95a5a6/ffffff?text=Gray+Shorts', description: 'Comfortable gray shorts for summer.', material: 'Cotton', rating: 4.7, reviews: 156, type: 'lower', style: ['casual', 'summer'], skinTone: ['all'], tags: ['summer', 'casual', 'shorts'], discount: 0 },
-    { id: 11, name: 'Denim Skirt', category: 'bottoms', price: 54.99, image: 'https://placehold.co/300x300/5b4b8a/ffffff?text=Denim+Skirt', tryOnImage: 'https://placehold.co/180x140/5b4b8a/ffffff?text=Denim+Skirt', description: 'Stylish denim skirt with a modern cut.', material: 'Stretch Denim', rating: 4.8, reviews: 234, type: 'lower', style: ['casual', 'trendy'], skinTone: ['fair', 'medium', 'dark'], tags: ['trendy', 'denim', 'skirt'], discount: 15 },
-    { id: 12, name: 'Leather Leggings', category: 'bottoms', price: 64.99, image: 'https://placehold.co/300x300/1a1a1a/ffffff?text=Leather+Leggings', tryOnImage: 'https://placehold.co/180x140/1a1a1a/ffffff?text=Leggings', description: 'Premium leather leggings for a trendy look.', material: 'Faux Leather', rating: 4.9, reviews: 345, type: 'lower', style: ['trendy', 'elegant'], skinTone: ['medium', 'dark'], tags: ['trendy', 'elegant', 'leather'], discount: 10 },
+        // BOTTOMS
+        { id: 7, name: 'Blue Jeans', category: 'bottoms', price: 59.99, image: 'https://placehold.co/300x300/1e3a5f/ffffff?text=Blue+Jeans', tryOnImage: 'https://placehold.co/180x140/1e3a5f/ffffff?text=Blue+Jeans', type: 'lower', tags: ['casual'], discount: 0, rating: 4.6, reviews: 73, description: 'Classic blue jeans', material: 'Denim' },
+        { id: 8, name: 'Black Pants', category: 'bottoms', price: 49.99, image: 'https://placehold.co/300x300/2c3e50/ffffff?text=Black+Pants', tryOnImage: 'https://placehold.co/180x140/2c3e50/ffffff?text=Black+Pants', type: 'lower', tags: ['formal'], discount: 8, rating: 4.5, reviews: 54, description: 'Formal black pants', material: 'Polyester Blend' },
+        { id: 9, name: 'Khaki Chinos', category: 'bottoms', price: 44.99, image: 'https://placehold.co/300x300/d4af37/ffffff?text=Khaki+Chinos', tryOnImage: 'https://placehold.co/180x140/d4af37/ffffff?text=Khaki+Chinos', type: 'lower', tags: ['casual'], discount: 0, rating: 4.4, reviews: 38, description: 'Casual khaki chinos', material: 'Cotton' },
+        { id: 10, name: 'Gray Shorts', category: 'bottoms', price: 34.99, image: 'https://placehold.co/300x300/95a5a6/ffffff?text=Gray+Shorts', tryOnImage: 'https://placehold.co/180x140/95a5a6/ffffff?text=Gray+Shorts', type: 'lower', tags: ['casual'], discount: 0, rating: 4.2, reviews: 29, description: 'Comfortable shorts', material: 'Cotton' },
+        { id: 11, name: 'Denim Skirt', category: 'bottoms', price: 54.99, image: 'https://placehold.co/300x300/5b4b8a/ffffff?text=Denim+Skirt', tryOnImage: 'https://placehold.co/180x140/5b4b8a/ffffff?text=Denim+Skirt', type: 'lower', tags: ['casual'], discount: 12, rating: 4.7, reviews: 46, description: 'Stylish denim skirt', material: 'Denim' },
+        { id: 12, name: 'Leather Leggings', category: 'bottoms', price: 64.99, image: 'https://placehold.co/300x300/1a1a1a/ffffff?text=Leather+Leggings', tryOnImage: 'https://placehold.co/180x140/1a1a1a/ffffff?text=Leather+Leggings', type: 'lower', tags: ['elegant'], discount: 0, rating: 4.8, reviews: 55, description: 'Premium leather leggings', material: 'Leather' },
 
-    // SHOES
-    { id: 13, name: 'White Sneakers', category: 'shoes', price: 74.99, image: 'https://placehold.co/300x300/ecf0f1/333333?text=White+Sneakers', tryOnImage: 'https://placehold.co/180x80/ecf0f1/333333?text=White+Shoes', description: 'Clean white sneakers for a casual look.', material: 'Canvas-Rubber', rating: 4.8, reviews: 612, type: 'shoes', style: ['casual', 'sporty'], skinTone: ['all'], tags: ['casual', 'sneakers', 'white'], discount: 5 },
-    { id: 14, name: 'Black Formal Shoes', category: 'shoes', price: 89.99, image: 'https://placehold.co/300x300/2c3e50/ffffff?text=Formal+Shoes', tryOnImage: 'https://placehold.co/180x80/2c3e50/ffffff?text=Formal+Shoes', description: 'Elegant black formal shoes for special occasions.', material: 'Leather', rating: 4.9, reviews: 467, type: 'shoes', style: ['formal', 'elegant'], skinTone: ['all'], tags: ['formal', 'elegant', 'black'], discount: 18 },
-    { id: 15, name: 'Brown Loafers', category: 'shoes', price: 79.99, image: 'https://placehold.co/300x300/8b4513/ffffff?text=Brown+Loafers', tryOnImage: 'https://placehold.co/180x80/8b4513/ffffff?text=Brown+Shoes', description: 'Comfortable brown loafers for business casual.', material: 'Suede', rating: 4.8, reviews: 334, type: 'shoes', style: ['business', 'casual'], skinTone: ['fair', 'medium'], tags: ['business', 'casual', 'loafers'], discount: 0 },
-    { id: 16, name: 'Red Athletic Shoes', category: 'shoes', price: 84.99, image: 'https://placehold.co/300x300/e74c3c/ffffff?text=Athletic+Shoes', tryOnImage: 'https://placehold.co/180x80/e74c3c/ffffff?text=Red+Shoes', description: 'Sporty red athletic shoes for active wear.', material: 'Mesh-Synthetic', rating: 4.9, reviews: 589, type: 'shoes', style: ['sporty', 'casual'], skinTone: ['all'], tags: ['sporty', 'athletic', 'red'], discount: 12 },
-    { id: 17, name: 'Blue Sandals', category: 'shoes', price: 49.99, image: 'https://placehold.co/300x300/3498db/ffffff?text=Blue+Sandals', tryOnImage: 'https://placehold.co/180x80/3498db/ffffff?text=Blue+Shoes', description: 'Comfortable blue sandals for summer.', material: 'Rubber', rating: 4.6, reviews: 198, type: 'shoes', style: ['casual', 'summer'], skinTone: ['all'], tags: ['summer', 'casual', 'sandals'], discount: 0 },
-    { id: 18, name: 'Designer Heels', category: 'shoes', price: 99.99, image: 'https://placehold.co/300x300/e91e63/ffffff?text=Designer+Heels', tryOnImage: 'https://placehold.co/180x80/e91e63/ffffff?text=Heels', description: 'Elegant designer heels for special occasions.', material: 'Patent Leather', rating: 4.9, reviews: 421, type: 'shoes', style: ['formal', 'elegant'], skinTone: ['fair', 'medium', 'dark'], tags: ['formal', 'elegant', 'heels'], discount: 22 }
-];
+        // SHOES
+        { id: 13, name: 'White Sneakers', category: 'shoes', price: 74.99, image: 'https://placehold.co/300x300/ecf0f1/333333?text=White+Sneakers', tryOnImage: 'https://placehold.co/180x80/ecf0f1/333333?text=Sneakers', type: 'shoes', tags: ['casual'], discount: 0, rating: 4.6, reviews: 81, description: 'Comfortable sneakers', material: 'Canvas' },
+        { id: 14, name: 'Black Formal Shoes', category: 'shoes', price: 89.99, image: 'https://placehold.co/300x300/2c3e50/ffffff?text=Formal+Shoes', tryOnImage: 'https://placehold.co/180x80/2c3e50/ffffff?text=Formal+Shoes', type: 'shoes', tags: ['formal'], discount: 0, rating: 4.9, reviews: 62, description: 'Elegant formal shoes', material: 'Leather' },
+        { id: 15, name: 'Brown Loafers', category: 'shoes', price: 79.99, image: 'https://placehold.co/300x300/8b4513/ffffff?text=Brown+Loafers', tryOnImage: 'https://placehold.co/180x80/8b4513/ffffff?text=Loafers', type: 'shoes', tags: ['formal'], discount: 10, rating: 4.5, reviews: 47, description: 'Classic loafers', material: 'Leather' },
+        { id: 16, name: 'Red Athletic Shoes', category: 'shoes', price: 84.99, image: 'https://placehold.co/300x300/e74c3c/ffffff?text=Athletic+Shoes', tryOnImage: 'https://placehold.co/180x80/e74c3c/ffffff?text=Athletic+Shoes', type: 'shoes', tags: ['casual'], discount: 0, rating: 4.7, reviews: 53, description: 'Performance athletic shoes', material: 'Mesh' },
+        { id: 17, name: 'Blue Sandals', category: 'shoes', price: 49.99, image: 'https://placehold.co/300x300/3498db/ffffff?text=Blue+Sandals', tryOnImage: 'https://placehold.co/180x80/3498db/ffffff?text=Sandals', type: 'shoes', tags: ['casual'], discount: 0, rating: 4.3, reviews: 35, description: 'Casual sandals', material: 'Rubber' },
+        { id: 18, name: 'Designer Heels', category: 'shoes', price: 99.99, image: 'https://placehold.co/300x300/e91e63/ffffff?text=Designer+Heels', tryOnImage: 'https://placehold.co/180x80/e91e63/ffffff?text=Heels', type: 'shoes', tags: ['elegant'], discount: 22, rating: 4.8, reviews: 78, description: 'Luxury designer heels', material: 'Leather' }
+    ];
+}
+
+// Load products dynamically
+const products = getProductsData();
 
 // Advanced AI Recommendation Engine
 class AIRecommendationEngine {
@@ -195,7 +211,7 @@ function loadProducts(category) {
     if (appState.searchQuery) {
         filtered = filtered.filter(p => 
             p.name.toLowerCase().includes(appState.searchQuery) ||
-            p.tags.some(tag => tag.includes(appState.searchQuery))
+            (p.tags && p.tags.some(tag => tag.includes(appState.searchQuery)))
         );
     }
 
@@ -229,11 +245,11 @@ function sortProducts(list, sortBy) {
         case 'price-desc':
             return sorted.sort((a, b) => b.price - a.price);
         case 'rating':
-            return sorted.sort((a, b) => b.rating - a.rating);
+            return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         case 'newest':
             return sorted.reverse();
         default: // popularity
-            return sorted.sort((a, b) => b.reviews - a.reviews);
+            return sorted.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
     }
 }
 
@@ -246,7 +262,7 @@ function createProductCard(product) {
     const finalPrice = (product.price * (1 - product.discount / 100)).toFixed(2);
     const originalPrice = product.discount > 0 ? `<span class="original-price">$${product.price.toFixed(2)}</span>` : '';
     
-    const ratingStars = '★'.repeat(Math.floor(product.rating)) + (product.rating % 1 >= 0.5 ? '½' : '');
+    const ratingStars = '★'.repeat(Math.floor(product.rating || 4)) + (((product.rating || 4) % 1 >= 0.5) ? '½' : '');
     
     card.innerHTML = `
         <div class="product-image-wrapper">
@@ -258,7 +274,7 @@ function createProductCard(product) {
             <h4 class="product-name">${product.name}</h4>
             <div class="product-rating">
                 <span class="stars">${ratingStars}</span>
-                <span class="rating-count">(${product.reviews})</span>
+                <span class="rating-count">(${product.reviews || 0})</span>
             </div>
             <div class="product-price">
                 ${originalPrice}
@@ -296,9 +312,9 @@ function tryOnProduct(product, cardElement) {
     document.getElementById('item-name').textContent = product.name;
     document.getElementById('item-category').textContent = `${product.category.charAt(0).toUpperCase() + product.category.slice(1)} ${product.discount > 0 ? `(-${product.discount}%)` : ''}`;
     document.getElementById('item-price').textContent = `$${finalPrice}`;
-    document.getElementById('item-description').textContent = product.description;
-    document.getElementById('item-material').innerHTML = `<strong>Material:</strong> ${product.material}`;
-    document.getElementById('item-rating').innerHTML = `<strong>Rating:</strong> ${'★'.repeat(Math.floor(product.rating))} (${product.reviews} reviews)`;
+    document.getElementById('item-description').textContent = product.description || 'No description';
+    document.getElementById('item-material').innerHTML = `<strong>Material:</strong> ${product.material || 'Not specified'}`;
+    document.getElementById('item-rating').innerHTML = `<strong>Rating:</strong> ${'★'.repeat(Math.floor(product.rating || 4))} (${product.reviews || 0} reviews)`;
     
     appState.selectedItems[product.type] = product;
     updateAddToCartButton();
@@ -318,11 +334,13 @@ function filterProducts(category) {
 // ============== FEATURED PRODUCTS ==============
 function loadFeaturedProducts() {
     const featuredGrid = document.getElementById('featuredGrid');
+    if (!featuredGrid) return;
+    
     featuredGrid.innerHTML = '';
     
     // Select top rated products
     const featured = products
-        .sort((a, b) => b.rating - a.rating)
+        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
         .slice(0, 6);
     
     featured.forEach(product => {
@@ -338,12 +356,12 @@ function loadFeaturedProducts() {
             </div>
             <div class="featured-info">
                 <h3>${product.name}</h3>
-                <p>${product.description}</p>
+                <p>${product.description || 'Premium quality clothing'}</p>
                 <div class="featured-price">
                     ${product.discount > 0 ? `<span class="original-price">$${product.price.toFixed(2)}</span>` : ''}
                     <span>$${finalPrice}</span>
                 </div>
-                <button class="add-to-cart-btn" onclick="addProductToCart('${product.id}')">Add to Cart</button>
+                <button class="add-to-cart-btn" onclick="addProductToCart(${product.id})">Add to Cart</button>
             </div>
         `;
         featuredGrid.appendChild(card);
@@ -560,7 +578,7 @@ function displayRecommendations(recommendations) {
                             <p class="item-name">${item.name}</p>
                             <p class="item-price">$${(item.price * (1 - item.discount / 100)).toFixed(2)}</p>
                             <p class="match-score">Match: ${Math.round(item.matchScore)}%</p>
-                            <button class="btn btn-small btn-primary" onclick="addProductToCart('${item.id}')">Add to Cart</button>
+                            <button class="btn btn-small btn-primary" onclick="addProductToCart(${item.id})">Add to Cart</button>
                         </div>
                     </div>
                 `).join('')}
@@ -586,7 +604,10 @@ function tryOnAIOutfit(outfitNumber) {
             }
         });
         
-        document.querySelector('.try-on-section').scrollIntoView({ behavior: 'smooth' });
+        const tryOnSection = document.querySelector('.try-on-section');
+        if (tryOnSection) {
+            tryOnSection.scrollIntoView({ behavior: 'smooth' });
+        }
         showNotification('✨ Outfit loaded in virtual mirror!', 'success');
     }
 }
@@ -626,6 +647,10 @@ function showNotification(message, type = 'success') {
         notification.style.animation = 'slideOutRight 0.4s ease';
         setTimeout(() => notification.remove(), 400);
     }, 3500);
+}
+
+function showAdminNotification(message, type = 'info') {
+    showNotification(message, type);
 }
 
 // ============== NEWSLETTER ==============
@@ -668,6 +693,15 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeCart();
     if (e.ctrlKey && e.key === 'k') {
         e.preventDefault();
-        document.getElementById('productSearch').focus();
+        const searchInput = document.getElementById('productSearch');
+        if (searchInput) searchInput.focus();
+    }
+});
+
+// Listen for admin product updates
+window.addEventListener('storage', (event) => {
+    if (event.key === 'admin_products') {
+        console.log('🔄 Admin products updated, reloading...');
+        location.reload();
     }
 });
