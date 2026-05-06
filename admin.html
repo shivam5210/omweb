@@ -318,13 +318,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Product Image URL</label>
-                    <input type="url" id="productImage">
+                    <label>Product Image Upload 📸</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="productImageFile" accept="image/*" onchange="handleImageUpload(event, 'productImage')">
+                        <div id="productImagePreview" class="image-preview"></div>
+                    </div>
+                    <small>Or paste image URL below:</small>
+                    <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
                 </div>
 
                 <div class="form-group">
-                    <label>Try-On Image URL</label>
-                    <input type="url" id="productTryOnImage">
+                    <label>Try-On Image Upload 📸</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="productTryOnImageFile" accept="image/*" onchange="handleImageUpload(event, 'productTryOnImage')">
+                        <div id="productTryOnImagePreview" class="image-preview"></div>
+                    </div>
+                    <small>Or paste image URL below:</small>
+                    <input type="url" id="productTryOnImage" placeholder="https://example.com/image.jpg">
                 </div>
 
                 <div class="form-group">
