@@ -2,7 +2,7 @@
 // 🔥 DRESSIFY ADMIN PANEL - ENHANCED VERSION 2.0
 // =====================================================
 // Better Error Handling, Input Validation & Dynamic Features
-// WITH IMAGE UPLOAD SUPPORT
+// WITH IMAGE UPLOAD SUPPORT - FIXED
 
 'use strict';
 
@@ -35,12 +35,8 @@ function handleImageUpload(event, fieldType) {
     reader.onload = function(e) {
         const base64Data = e.target.result;
         
-        // Store in localStorage
-        const storageKey = `image_${fieldType}_${Date.now()}`;
-        localStorage.setItem(storageKey, base64Data);
-
-        // Update the URL field with storage reference
-        document.getElementById(fieldType).value = storageKey;
+        // Update the URL field directly with base64 data
+        document.getElementById(fieldType).value = base64Data;
 
         // Show preview
         showImagePreview(fieldType, base64Data);
@@ -63,17 +59,9 @@ function showImagePreview(fieldType, imageData) {
     if (previewElement) {
         previewElement.innerHTML = `
             <img src="${imageData}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px;">
-            <p style="font-size: 12px; color: #666; margin-top: 5px;">✅ Image Selected</p>
+            <p style="font-size: 12px; color: #10b981; margin-top: 5px; font-weight: 600;">✅ Image Ready to Save</p>
         `;
     }
-}
-
-// Get image from localStorage or URL
-function getImageUrl(imageRef) {
-    if (imageRef && imageRef.startsWith('image_')) {
-        return localStorage.getItem(imageRef) || imageRef;
-    }
-    return imageRef;
 }
 
 // ============== UTILITY FUNCTIONS ==============
