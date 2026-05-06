@@ -2,6 +2,7 @@
 // 🔥 DRESSIFY ADMIN PANEL - ENHANCED VERSION 2.0
 // =====================================================
 // Better Error Handling, Input Validation & Dynamic Features
+// WITH IMAGE UPLOAD SUPPORT
 
 'use strict';
 
@@ -10,6 +11,70 @@ window.addEventListener('error', (event) => {
     console.error('Admin Error:', event.error);
     showAdminNotification('⚠️ An error occurred', 'error');
 });
+
+// ============== IMAGE UPLOAD HANDLER ==============
+function handleImageUpload(event, fieldType) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        showToast('❌ कृपया एक छवि फ़ाइल चुनें (Image file select करें)', 'error');
+        return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+        showToast('❌ Image size 5MB से कम होनी चाहिए', 'error');
+        return;
+    }
+
+    // Read file and convert to base64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Data = e.target.result;
+        
+        // Store in localStorage
+        const storageKey = `image_${fieldType}_${Date.now()}`;
+        localStorage.setItem(storageKey, base64Data);
+
+        // Update the URL field with storage reference
+        document.getElementById(fieldType).value = storageKey;
+
+        // Show preview
+        showImagePreview(fieldType, base64Data);
+        
+        showToast('✅ Image upload successful!', 'success');
+    };
+
+    reader.onerror = function() {
+        showToast('❌ Error reading file', 'error');
+    };
+
+    reader.readAsDataURL(file);
+}
+
+// Show image preview
+function showImagePreview(fieldType, imageData) {
+    const previewId = fieldType + 'Preview';
+    const previewElement = document.getElementById(previewId);
+    
+    if (previewElement) {
+        previewElement.innerHTML = `
+            <img src="${imageData}" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px;">
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">✅ Image Selected</p>
+        `;
+    }
+}
+
+// Get image from localStorage or URL
+function getImageUrl(imageRef) {
+    if (imageRef && imageRef.startsWith('image_')) {
+        return localStorage.getItem(imageRef) || imageRef;
+    }
+    return imageRef;
+}
 
 // ============== UTILITY FUNCTIONS ==============
 function showAdminNotification(message, type = 'info') {
@@ -349,6 +414,9 @@ function openProductModal() {
         const form = document.getElementById('productForm');
         if (form) {
             form.reset();
+            // Clear preview
+            document.getElementById('productImagePreview').innerHTML = '';
+            document.getElementById('productTryOnImagePreview').innerHTML = '';
             // Add real-time validation listeners
             addFormValidation(form);
         }
@@ -413,6 +481,14 @@ function editProduct(id) {
         document.getElementById('productTryOnImage').value = product.tryOnImage || '';
         document.getElementById('productType').value = product.type || '';
         document.getElementById('productRating').value = product.rating || '';
+        
+        // Show image previews if they exist
+        if (product.image && product.image.startsWith('data:image')) {
+            showImagePreview('productImage', product.image);
+        }
+        if (product.tryOnImage && product.tryOnImage.startsWith('data:image')) {
+            showImagePreview('productTryOnImage', product.tryOnImage);
+        }
         
         document.getElementById('productModal').classList.add('active');
     } catch (error) {
